@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSO Company Snapshot - Financial Research Portal</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #fafbfc;
+            color: #1a1a1a;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Header Section */
+        .header {
+            background: linear-gradient(135deg, #0B2447 0%, #006B3F 100%);
+            color: white;
+            padding: 32px;
+            border-radius: 20px;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 32px rgba(11, 36, 71, 0.15);
+        }
+
+        .header-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .company-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            width: 72px;
+            height: 72px;
+            background: white;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #006B3F;
+            font-size: 20px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .company-details h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .ticker-sector {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .price-section {
+            text-align: center;
+        }
+
+        .current-price {
+            font-size: 42px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .price-change {
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 8px;
+            color: #10b981;
+        }
+
+        .price-range {
+            margin-top: 16px;
+        }
+
+        .range-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            position: relative;
+            margin: 8px 0;
+        }
+
+        .range-fill {
+            height: 100%;
+            background: #10b981;
+            border-radius: 3px;
+            width: 75%;
+        }
+
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .market-stats {
+            display: grid;
+            gap: 16px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+            border: 1px solid #e8eef5;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: #0B2447;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-grid {
+            display: grid;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .grid-2 { grid-template-columns: 1fr 1fr; }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+        .grid-6 { grid-template-columns: repeat(6, 1fr); }
+
+        /* Market Performance Cards */
+        .performance-card {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e8eef5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .performance-label {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .performance-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0B2447;
+        }
+
+        .mini-chart {
+            height: 20px;
+            margin-top: 12px;
+            background: linear-gradient(90deg, #006B3F, #10b981);
+            border-radius: 4px;
+            opacity: 0.7;
+        }
+
+        /* Metric Cards */
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e8eef5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #006B3F, #10b981);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            color: white;
+            font-size: 18px;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0B2447;
+            margin-bottom: 12px;
+        }
+
+        .metric-bar {
+            height: 4px;
+            background: #e8eef5;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .metric-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #006B3F, #10b981);
+            border-radius: 2px;
+        }
+
+        /* Chart Containers */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 16px;
+        }
+
+        .chart-small {
+            height: 200px;
+        }
+
+        /* Progress Bars */
+        .progress-item {
+            margin-bottom: 20px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .progress-label {
+            font-weight: 500;
+            color: #0B2447;
+        }
+
+        .progress-value {
+            font-weight: 600;
+            color: #006B3F;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e8eef5;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+
+        .progress-excellent { background: linear-gradient(90deg, #10b981, #059669); }
+        .progress-good { background: linear-gradient(90deg, #f59e0b, #d97706); }
+        .progress-average { background: linear-gradient(90deg, #6b7280, #4b5563); }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid #e8eef5;
+        }
+
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #475569;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            font-size: 15px;
+        }
+
+        .number {
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .positive { color: #10b981; }
+        .negative { color: #ef4444; }
+        .neutral { color: #6b7280; }
+
+        .highlight-row {
+            background: linear-gradient(90deg, rgba(0,107,63,0.05), rgba(16,185,129,0.05));
+        }
+
+        /* Corporate Info */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .info-item {
+            text-align: center;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .info-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #0B2447;
+        }
+
+        .company-description {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #475569;
+        }
+
+        /* Announcements */
+        .announcement-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .announcement-card {
+            background: white;
+            border: 1px solid #e8eef5;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .announcement-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #006B3F, #10b981);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            color: white;
+            font-size: 20px;
+        }
+
+        .announcement-title {
+            font-weight: 600;
+            color: #0B2447;
+            margin-bottom: 8px;
+        }
+
+        .announcement-date {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .header-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                text-align: center;
+            }
+            
+            .grid-6 { grid-template-columns: repeat(3, 1fr); }
+            .grid-4 { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .grid-6, .grid-4, .grid-3, .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .announcement-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <div class="header-grid">
+                <div class="company-info">
+                    <div class="logo">PSO</div>
+                    <div class="company-details">
+                        <h1>Pakistan State Oil Company Limited</h1>
+                        <div class="ticker-sector">
+                            <span><strong>PSX: PSO</strong></span>
+                            <span>•</span>
+                            <span>Energy / Oil & Gas</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="price-section">
+                    <div class="current-price">PKR 458.36</div>
+                    <div class="price-change">+1.41% ▲</div>
+                    <div class="price-range">
+                        <div style="font-size: 14px; margin-bottom: 8px;">52W Range</div>
+                        <div class="range-bar">
+                            <div class="range-fill"></div>
+                        </div>
+                        <div class="range-labels">
+                            <span>210</span>
+                            <span>490</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="market-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Market Cap</span>
+                        <span class="stat-value">PKR 825.3B</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Shares Outstanding</span>
+                        <span class="stat-value">1.8B</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Free Float</span>
+                        <span class="stat-value">448.69M (24.92%)</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Avg Volume</span>
+                        <span class="stat-value">1.31M</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Market Performance Summary -->
+        <div class="section-grid grid-4">
+            <div class="performance-card">
+                <div class="performance-label">Open</div>
+                <div class="performance-value">451.98</div>
+                <div class="mini-chart"></div>
+            </div>
+            <div class="performance-card">
+                <div class="performance-label">Close</div>
+                <div class="performance-value">458.36</div>
+                <div class="mini-chart"></div>
+            </div>
+            <div class="performance-card">
+                <div class="performance-label">High</div>
+                <div class="performance-value">461.79</div>
+                <div class="mini-chart"></div>
+            </div>
+            <div class="performance-card">
+                <div class="performance-label">Low</div>
+                <div class="performance-value">448.01</div>
+                <div class="mini-chart"></div>
+            </div>
+        </div>
+
+        <!-- Key Valuation Ratios -->
+        <div class="card">
+            <h2 class="card-title">📊 Key Valuation Ratios</h2>
+            <div class="section-grid grid-6">
+                <div class="metric-card">
+                    <div class="metric-icon">📈</div>
+                    <div class="metric-label">P/E Ratio</div>
+                    <div class="metric-value">8.46</div>
+                    <div class="metric-bar">
+                        <div class="metric-fill" style="width: 65%"></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">📚</div>
+                    <div class="metric-label">P/B Ratio</div>
+                    <div class="metric-value">3.06</div>
+                    <div class="metric-bar">
+                        <div class="metric-fill" style="width: 75%"></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">💰</div>
+                    <div class="metric-label">Dividend Yield</div>
+                    <div class="metric-value">6.11%</div>
+                    <div class="metric-bar">
+                        <div class="metric-fill" style="width: 85%"></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">💵</div>
+                    <div class="metric-label">EPS</div>
+                    <div class="metric-value">54.18</div>
+                    <div class="metric-bar">
+                        <div class="metric-fill" style="width: 90%"></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">📊</div>
+                    <div class="metric-label">Net Margin</div>
+                    <div class="metric-value">19.79%</div>
+                    <div class="metric-bar">
+                        <div class="metric-fill" style="width: 95%"></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">🏢</div>
+                    <div class="metric-label">Market Cap</div>
+                    <div class="metric-value">825.3B</div>
+                    <div class="metric-bar">
+                        <div class="metric-fill" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Charts -->
+        <div class="section-grid grid-3">
+            <div class="card">
+                <h2 class="card-title">📈 Revenue vs Net Income</h2>
+                <div class="chart-container">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <h2 class="card-title">📊 EPS Trend (3 Years)</h2>
+                <div class="chart-container">
+                    <canvas id="epsChart"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <h2 class="card-title">🥧 Free Float Distribution</h2>
+                <div class="chart-container">
+                    <canvas id="floatChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profitability & Financial Ratios -->
+        <div class="card">
+            <h2 class="card-title">📊 Profitability & Financial Ratios</h2>
+            <div class="section-grid grid-2">
+                <div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">Return on Equity (ROE)</span>
+                            <span class="progress-value">22.4%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-excellent" style="width: 89%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">Return on Assets (ROA)</span>
+                            <span class="progress-value">8.7%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-good" style="width: 72%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">Gross Margin</span>
+                            <span class="progress-value">12.3%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-good" style="width: 68%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">Net Profit Margin</span>
+                            <span class="progress-value">19.79%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-excellent" style="width: 95%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">Dividend Yield</span>
+                            <span class="progress-value">6.11%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-excellent" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">Current Ratio</span>
+                            <span class="progress-value">1.8</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-good" style="width: 75%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Financial Summary Table -->
+        <div class="card">
+            <h2 class="card-title">📋 Financial Summary</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th class="number">Value</th>
+                            <th class="number">Change</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>EPS (PKR)</strong></td>
+                            <td class="number">54.18</td>
+                            <td class="number positive">↑ 12.5%</td>
+                            <td>Strong annual earnings growth</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dividend Yield (%)</strong></td>
+                            <td class="number">6.11</td>
+                            <td class="number neutral">→ 0.0%</td>
+                            <td>Stable dividend policy</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Net Income Margin (%)</strong></td>
+                            <td class="number">19.79</td>
+                            <td class="number positive">↑ 8.3%</td>
+                            <td>Improved cost efficiency</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Market Cap</strong></td>
+                            <td class="number">825.3B</td>
+                            <td class="number positive">↑ 15.2%</td>
+                            <td>High investor confidence</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Free Float %</strong></td>
+                            <td class="number">24.92</td>
+                            <td class="number neutral">→ 0.0%</td>
+                            <td>Moderate liquidity</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Peer Comparison -->
+        <div class="card">
+            <h2 class="card-title">👥 Peer Comparison</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th class="number">P/E Ratio</th>
+                            <th class="number">Dividend Yield</th>
+                            <th class="number">Market Cap</th>
+                            <th class="number">Net Margin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="highlight-row">
+                            <td><strong>Pakistan State Oil (PSO)</strong></td>
+                            <td class="number positive"><strong>8.46</strong></td>
+                            <td class="number positive"><strong>6.11%</strong></td>
+                            <td class="number"><strong>PKR 825.3B</strong></td>
+                            <td class="number positive"><strong>19.79%</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Shell Pakistan (SHEL)</td>
+                            <td class="number">12.3</td>
+                            <td class="number">4.2%</td>
+                            <td class="number">PKR 156.8B</td>
+                            <td class="number">8.4%</td>
+                        </tr>
+                        <tr>
+                            <td>Attock Petroleum (APL)</td>
+                            <td class="number">9.8</td>
+                            <td class="number">5.1%</td>
+                            <td class="number">PKR 298.5B</td>
+                            <td class="number">12.6%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Corporate Information -->
+        <div class="card">
+            <h2 class="card-title">🏢 Corporate Information</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Authorized Capital</div>
+                    <div class="info-value">PKR 25.0B</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Paid-up Capital</div>
+                    <div class="info-value">PKR 18.0B</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Face Value</div>
+                    <div class="info-value">PKR 10</div>
+                </div>
+            </div>
+            <div class="company-description">
+                <strong>About PSO:</strong> Pakistan State Oil Company Limited is the leading oil marketing company in Pakistan with a vast retail network, aviation fuel supply, and lubricant division. The company operates over 3,500 retail outlets nationwide and maintains strategic fuel storage facilities across major cities. PSO serves both retail consumers and commercial clients including airlines, industrial manufacturers, and government entities.
+                <br><br>
+                <strong>Headquarters:</strong> Karachi, Pakistan
+            </div>
+        </div>
+
+        <!-- Latest Corporate Announcements -->
+        <div class="card">
+            <h2 class="card-title">📰 Latest Corporate Announcements</h2>
+            <div class="announcement-grid">
+                <div class="announcement-card">
+                    <div class="announcement-icon">💰</div>
+                    <div class="announcement-title">Dividend Declaration</div>
+                    <div class="announcement-date">PKR 28 per share<br>Ex-Date: March 15, 2025</div>
+                </div>
+                <div class="announcement-card">
+                    <div class="announcement-icon">🗓</div>
+                    <div class="announcement-title">Annual General Meeting</div>
+                    <div class="announcement-date">Scheduled for<br>April 25, 2025</div>
+                </div>
+                <div class="announcement-card">
+                    <div class="announcement-icon">📈</div>
+                    <div class="announcement-title">Q1 2025 Results</div>
+                    <div class="announcement-date">Financial Release<br>April 30, 2025</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Revenue vs Net Income Chart
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(revenueCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Q2 23', 'Q3 23', 'Q4 23', 'Q1 24', 'Q2 24', 'Q3 24', 'Q4 24', 'Q1 25'],
+                datasets: [{
+                    label: 'Revenue (PKR B)',
+                    data: [1250, 1320, 1180, 1420, 1380, 1450, 1520, 1580],
+                    backgroundColor: 'rgba(11, 36, 71, 0.8)',
+                    borderRadius: 4,
+                    yAxisID: 'y'
+                }, {
+                    label: 'Net Income (PKR B)',
+                    data: [185, 195, 165, 220, 210, 235, 250, 265],
+                    type: 'line',
+                    borderColor: '#006B3F',
+                    backgroundColor: 'rgba(0, 107, 63, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    yAxisID: 'y1'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { usePointStyle: true, padding: 20 }
+                    }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        grid: { drawOnChartArea: false }
+                    }
+                }
+            }
+        });
+
+        // EPS Trend Chart
+        const epsCtx = document.getElementById('epsChart').getContext('2d');
+        new Chart(epsCtx, {
+            type: 'line',
+            data: {
+                labels: ['2022', '2023', '2024', '2025 (Est)'],
+                datasets: [{
+                    label: 'EPS (PKR)',
+                    data: [38.5, 45.2, 54.18, 62.5],
+                    borderColor: '#006B3F',
+                    backgroundColor: 'rgba(0, 107, 63, 0.1)',
+                    borderWidth: 4,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#006B3F',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 3,
+                    pointRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // Free Float Chart
+        const floatCtx = document.getElementById('floatChart').getContext('2d');
+        new Chart(floatCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Free Float', 'Locked Shares'],
+                datasets: [{
+                    data: [24.92, 75.08],
+                    backgroundColor: ['#006B3F', '#e8eef5'],
+                    borderWidth: 0,
+                    cutout: '70%'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 20, usePointStyle: true }
+                    }
+                }
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98f21c67e0f908b5',t:'MTc2MDU2MDYxMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
